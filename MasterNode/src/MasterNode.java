@@ -44,6 +44,7 @@ public class MasterNode {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		//Pulled from mac
+		//And from pc
 		try{
 			receiveAndReturn();
 		}
