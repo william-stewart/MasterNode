@@ -21,15 +21,16 @@ public class MasterNode {
 			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 			clientSentence = inFromClient.readLine();
+			System.out.println(clientSentence);
 			sendToWorker(clientSentence);
 			capitalizedSentence = clientSentence.toUpperCase() + '\n';
-			outToClient.writeBytes(workerSentence);
+			outToClient.writeBytes(workerSentence + "\n");
 		}
 	}
 	
 	public static void sendToWorker(String input) throws Exception{
 		DatagramSocket clientSocket = new DatagramSocket();
-		InetAddress IPAddress = InetAddress.getByName("156.143.90.9");
+		InetAddress IPAddress = InetAddress.getByName("10.102.55.23");
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		sendData = input.getBytes();
@@ -40,6 +41,7 @@ public class MasterNode {
 		String output = new String(receivePacket.getData());
 		clientSocket.close();
 		workerSentence = output;
+		System.out.println(output);
 	}
 
 	public static void main(String[] args) {
