@@ -10,8 +10,7 @@ import java.net.Socket;
 
 public class MasterNode {
 	static String clientSentence;
-	static String capitalizedSentence;
-	static String workerSentence = "already set";
+	static String workerSentence;
 	
 	public static void receiveAndReturn() throws Exception{
 		ServerSocket welcomeSocket = new ServerSocket(6789);
@@ -20,17 +19,17 @@ public class MasterNode {
 			Socket connectionSocket = welcomeSocket.accept();
 			BufferedReader inFromClient = new BufferedReader(new InputStreamReader(connectionSocket.getInputStream()));
 			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+			clientSentence = "";
+			workerSentence = "";
 			clientSentence = inFromClient.readLine();
-			System.out.println(clientSentence);
 			sendToWorker(clientSentence);
-			capitalizedSentence = clientSentence.toUpperCase() + '\n';
 			outToClient.writeBytes(workerSentence + "\n");
 		}
 	}
 	
 	public static void sendToWorker(String input) throws Exception{
 		DatagramSocket clientSocket = new DatagramSocket();
-		InetAddress IPAddress = InetAddress.getByName("10.102.55.23");
+		InetAddress IPAddress = InetAddress.getByName("156.143.90.9");
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		sendData = input.getBytes();
@@ -40,8 +39,8 @@ public class MasterNode {
 		clientSocket.receive(receivePacket);
 		String output = new String(receivePacket.getData());
 		clientSocket.close();
-		workerSentence = output;
-		System.out.println(output);
+		workerSentence = output + "\n";
+		System.out.println("from worker: " + output);
 	}
 
 	public static void main(String[] args) {
