@@ -22,14 +22,16 @@ public class MasterNode {
 			clientSentence = "";
 			workerSentence = "";
 			clientSentence = inFromClient.readLine();
-			sendToWorker(clientSentence);
+			sendToWorker(clientSentence,"10.102.55.23");
+			outToClient.writeBytes(workerSentence + "\n");
+			sendToWorker(clientSentence,"10.102.55.20");
 			outToClient.writeBytes(workerSentence + "\n");
 		}
 	}
 	
-	public static void sendToWorker(String input) throws Exception{
+	public static void sendToWorker(String input,String IPAddr) throws Exception{
 		DatagramSocket clientSocket = new DatagramSocket();
-		InetAddress IPAddress = InetAddress.getByName("10.102.55.20");
+		InetAddress IPAddress = InetAddress.getByName(IPAddr);
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		sendData = input.getBytes();
