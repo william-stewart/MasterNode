@@ -29,7 +29,7 @@ public class MasterNode {
 	
 	public static void sendToWorker(String input) throws Exception{
 		DatagramSocket clientSocket = new DatagramSocket();
-		InetAddress IPAddress = InetAddress.getByName("156.143.90.9");
+		InetAddress IPAddress = InetAddress.getByName("10.102.55.20");
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
 		sendData = input.getBytes();
