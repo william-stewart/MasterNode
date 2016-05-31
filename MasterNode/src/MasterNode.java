@@ -24,6 +24,8 @@ public class MasterNode {
 			clientSentence = inFromClient.readLine();
 			workerSentence = sendToWorker(clientSentence,"10.102.55.23");
 			String workerSentence2 = sendToWorker(clientSentence,"10.102.55.20");
+			workerSentence.replaceAll("\\s+", "");
+			workerSentence2.replaceAll("\\s+", "");
 			outToClient.writeBytes(workerSentence + "/" + workerSentence2 + "\n");
 		}
 	}
