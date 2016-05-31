@@ -22,14 +22,13 @@ public class MasterNode {
 			clientSentence = "";
 			workerSentence = "";
 			clientSentence = inFromClient.readLine();
-			sendToWorker(clientSentence,"10.102.55.23");
-			outToClient.writeBytes(workerSentence + "\n");
-			sendToWorker(clientSentence,"10.102.55.20");
-			outToClient.writeBytes(workerSentence + "\n");
+			workerSentence = sendToWorker(clientSentence,"10.102.55.23");
+			String workerSentence2 = sendToWorker(clientSentence,"10.102.55.20");
+			outToClient.writeBytes(workerSentence + "/" + workerSentence2 + "\n");
 		}
 	}
 	
-	public static void sendToWorker(String input,String IPAddr) throws Exception{
+	public static String sendToWorker(String input,String IPAddr) throws Exception{
 		DatagramSocket clientSocket = new DatagramSocket();
 		InetAddress IPAddress = InetAddress.getByName(IPAddr);
 		byte[] sendData = new byte[1024];
@@ -41,8 +40,10 @@ public class MasterNode {
 		clientSocket.receive(receivePacket);
 		String output = new String(receivePacket.getData());
 		clientSocket.close();
-		workerSentence = output + "\n";
+		//workerSentence = output + "\n";
+		output = output + "\n";
 		System.out.println("from worker: " + output);
+		return output;
 	}
 
 	public static void main(String[] args) {
