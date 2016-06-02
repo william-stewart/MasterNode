@@ -6,11 +6,35 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MasterNode {
 	static String clientSentence;
 	static String workerSentence;
+	
+	static class RefreshConnections extends TimerTask{
+		static String blankMessage = "*";
+		
+		public void run(){
+			try{
+				MasterNode.sendToWorker(blankMessage,"10.102.55.23");
+				MasterNode.sendToWorker(blankMessage,"10.102.55.20");
+				MasterNode.sendToWorker(blankMessage,"10.102.55.21");
+				MasterNode.sendToWorker(blankMessage,"10.102.55.11");
+				MasterNode.sendToWorker(blankMessage,"10.102.55.25");
+				MasterNode.sendToWorker(blankMessage,"10.102.55.24");
+				MasterNode.sendToWorker(blankMessage,"10.102.55.22");
+				MasterNode.sendToWorker(blankMessage,"10.102.59.25");
+				MasterNode.sendToWorker(blankMessage,"10.102.59.20");
+				MasterNode.sendToWorker(blankMessage,"10.102.59.22");
+				MasterNode.sendToWorker(blankMessage,"10.102.59.26");
+			}
+			catch(Exception e){}
+		}
+	}
+
 	
 	public static void receiveAndReturn() throws Exception{
 		ServerSocket welcomeSocket = new ServerSocket(6789);
@@ -41,6 +65,7 @@ public class MasterNode {
 	
 	public static String sendToWorker(String input,String IPAddr) throws Exception{
 		DatagramSocket clientSocket = new DatagramSocket();
+		clientSocket.setSoTimeout(2000);
 		InetAddress IPAddress = InetAddress.getByName(IPAddr);
 		byte[] sendData = new byte[1024];
 		byte[] receiveData = new byte[1024];
@@ -48,13 +73,19 @@ public class MasterNode {
 		DatagramPacket sendPacket = new DatagramPacket(sendData,sendData.length,IPAddress,9875);
 		clientSocket.send(sendPacket);
 		DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-		clientSocket.receive(receivePacket);
-		String output = new String(receivePacket.getData());
-		clientSocket.close();
-		//workerSentence = output + "\n";
-		output = output.trim();
-		System.out.println("from worker: " + output);
-		return output;
+		try{
+			clientSocket.receive(receivePacket);
+			String output = new String(receivePacket.getData());
+			//clientSocket.close();
+			//workerSentence = output + "\n";
+			output = output.trim();
+			System.out.println("from worker: " + output);
+			return output;
+		}
+		catch(Exception e){
+			//clientSocket.close();
+			return "No response from worker";
+		}
 	}
 
 	public static void main(String[] args) {
@@ -62,6 +93,8 @@ public class MasterNode {
 		//Pulled from mac
 		//And from pc
 		try{
+			Timer timer = new Timer();
+			timer.schedule(new RefreshConnections(), 0, 30000);
 			receiveAndReturn();
 		}
 		catch(Exception e){
