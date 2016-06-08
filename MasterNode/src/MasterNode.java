@@ -92,6 +92,7 @@ public class MasterNode {
 		// TODO Auto-generated method stub
 		//Pulled from mac
 		//And from pc
+		/*
 		try{
 			Timer timer = new Timer();
 			timer.schedule(new RefreshConnections(), 0, 30000);
@@ -99,6 +100,7 @@ public class MasterNode {
 		}
 		catch(Exception e){
 		}
+		*/
 		
 	}
 }
