@@ -15,9 +15,15 @@ public class MasterNodeThreaded {
 	static String workerSentence;
 	static String[] returnFromWorkers = new String[31];
 	
+	/*
+	 * Sends an insignificant packet to all of the nodes to maintain a fresh connection.
+	 * Is run in a separate thread that fires at designated interval in main method.
+	 */
 	static class RefreshConnections extends TimerTask{
+		//The message that will be send
 		static String blankMessage = "*";
 		
+		//Overwrites the run method to send the message to each node
 		public void run(){
 			try{
 				MasterNodeThreaded.sendToWorker(blankMessage,"pi10.fu.campus");
@@ -57,6 +63,9 @@ public class MasterNodeThreaded {
 		}
 	}
 	
+	/*
+	 * Allows for a different thread for communication with each node.
+	 */
 	public static class SendToAllWorkers implements Runnable{
 		
 		static String IPAddr;
@@ -84,7 +93,11 @@ public class MasterNodeThreaded {
 		}
 	}
 
-	
+	/*
+	 * Creates TCP Server to receive message from client and returns the data from the worker nodes
+	 * @param: 
+	 * @output:
+	 */
 	public static void receiveAndReturn() throws Exception{
 		ServerSocket welcomeSocket = new ServerSocket(6789);
 		
@@ -121,7 +134,6 @@ public class MasterNodeThreaded {
 			Thread threadPIEighteen = new Thread( new SendToAllWorkers(clientSentence,"pi28.fu.campus",28));
 			Thread threadPINineteen = new Thread( new SendToAllWorkers(clientSentence,"pi29.fu.campus",29));
 			Thread threadPITwenty = new Thread( new SendToAllWorkers(clientSentence,"pi30.fu.campus",30));
-			
 			//Thread threadPIOTwentyOne = new Thread( new SendToAllWorkers(clientSentence,"pi31.fu.campus",31));
 			Thread threadPITwentyTwo = new Thread( new SendToAllWorkers(clientSentence,"pi32.fu.campus",32));
 			Thread threadPITwentyThree = new Thread( new SendToAllWorkers(clientSentence,"pi33.fu.campus",33));
@@ -133,6 +145,7 @@ public class MasterNodeThreaded {
 			Thread threadPITwentyNine = new Thread( new SendToAllWorkers(clientSentence,"pi39.fu.campus",39));
 			Thread threadPIThirty = new Thread( new SendToAllWorkers(clientSentence,"pi40.fu.campus",40));
 			
+			//Start the threads (node 31 is dead - threadPIwentyOne has not been created)
 			threadPIOne.start();
 			threadPITwo.start();
 			threadPIThree.start();
@@ -154,7 +167,7 @@ public class MasterNodeThreaded {
 			threadPIEighteen.start();
 			threadPINineteen.start();
 			threadPITwenty.start();
-			
+			//threadPITwentyOne.start();
 			threadPITwentyTwo.start();
 			threadPITwentyThree.start();
 			threadPITwentyFour.start();
@@ -165,17 +178,24 @@ public class MasterNodeThreaded {
 			threadPITwentyNine.start();
 			threadPIThirty.start();
 
+			//Concatenate all sentences into one so it can be sent back to client
+			//use "/" as delimiter
 			String concatSentences = "";
 			for(String s: returnFromWorkers){
 				concatSentences =concatSentences.concat(s + "/");
 			}
-			//System.out.println(concatSentences);
 			
 			//Return data to client
 			outToClient.writeBytes(concatSentences + "\n");
 		}
 	}
 	
+	/*
+	 * Sends UDP packet to a worker node and waits for response packet.
+	 * @param: String input message that will be sent
+	 * @param: String IPAddr the ip address of the destination node
+	 * @output: String ouput message that is returned from the worker
+	 */
 	public synchronized static String sendToWorker(String input,String IPAddr) throws Exception{
 		DatagramSocket clientSocket = new DatagramSocket();
 		clientSocket.setSoTimeout(2000);
